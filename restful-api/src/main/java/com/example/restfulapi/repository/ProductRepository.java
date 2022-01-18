@@ -7,9 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface ProductRepository extends JpaRepository<Product, Integer>, JpaSpecificationExecutor<Product> {
+public interface ProductRepository extends JpaRepository<Product,Integer>, JpaSpecificationExecutor<Product> {
+    @Query("select p from Product p where p.name like %:name%")
     Product findByName(String name);
-/*
-    @Query("select p from Product p where p.categoryId = 1")
-    List<Product> findProductsByCategoryId(int id);*/
+    List<Product> findProductsByCategoryId(int id);
 }

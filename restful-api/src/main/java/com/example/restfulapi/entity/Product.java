@@ -1,7 +1,7 @@
 package com.example.restfulapi.entity;
 
-import com.example.restfulapi.entityDTO.ProductDTO;
-import com.example.restfulapi.model.ProductModel;
+//import com.example.restfulapi.entityDTO.ProductDTO;
+import com.example.restfulapi.status.ProductStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,9 +9,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
-@Getter
 @Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -21,24 +23,31 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
-    private String thumbnail;
-    private int quantity;
     private double price;
+    private String thumbnail;
+    private ProductStatus status;
+    private int quantity;
     @Column(name = "categoryId")
     private int categoryId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "categoryId",nullable = false,referencedColumnName = "id",insertable = false,updatable = false)
-    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "categoryId",insertable = false,updatable = false)
     private Category category;
 
-    public static Product convertDTOtoEntity(ProductDTO productDTO){
-        Product temp = new Product();
-        temp.setName(productDTO.getName());
-        temp.setCategoryId(productDTO.getCategoryId());
-        temp.setQuantity(productDTO.getQuantity());
-        temp.setThumbnail(productDTO.getThumbnail());
-        temp.setPrice(productDTO.getPrice());
-        return temp;
-    }
+    @OneToMany(mappedBy = "product")
+    @JsonIgnore
+    private Set<OrderDetail> orderDetails = new HashSet<>();
 }
+
+/*    public static Product convertDTOtoEntity(ProductDTO dto){
+        Product entity = new Product();
+        entity.setId(dto.getId());
+        entity.setName(dto.getName());
+        entity.setPrice(dto.getPrice());
+        entity.setThumbnail(dto.getThumbnail());
+        entity.setStatus(dto.getStatus());
+        entity.setCategoryId(dto.getCategoryId());
+        entity.setQuantity(dto.getQuantity());
+        return entity;
+    }
+}*/

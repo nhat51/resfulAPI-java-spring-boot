@@ -16,6 +16,7 @@ public class ResponseApi {
         this.data = data;
     }
 
+
     public String getMessage() {
         return message;
     }
