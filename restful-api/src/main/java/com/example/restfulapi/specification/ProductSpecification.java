@@ -7,11 +7,11 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-public class Specification implements org.springframework.data.jpa.domain.Specification<Product> {
+public class ProductSpecification implements org.springframework.data.jpa.domain.Specification<Product> {
 
     private SearchCriteria criteria;
 
-    public Specification(SearchCriteria criteria) {
+    public ProductSpecification(SearchCriteria criteria) {
         this.criteria = criteria;
     }
 

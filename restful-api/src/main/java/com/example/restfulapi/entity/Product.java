@@ -1,6 +1,7 @@
 package com.example.restfulapi.entity;
 
 //import com.example.restfulapi.entityDTO.ProductDTO;
+import com.example.restfulapi.entityDTO.ProductDTO;
 import com.example.restfulapi.status.ProductStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
@@ -32,14 +33,15 @@ public class Product {
 
     @ManyToOne
     @JoinColumn(name = "categoryId",insertable = false,updatable = false)
+    @JsonIgnore
     private Category category;
 
     @OneToMany(mappedBy = "product")
     @JsonIgnore
     private Set<OrderDetail> orderDetails = new HashSet<>();
-}
 
-/*    public static Product convertDTOtoEntity(ProductDTO dto){
+
+    public static Product convertDTOtoEntity(ProductDTO dto){
         Product entity = new Product();
         entity.setId(dto.getId());
         entity.setName(dto.getName());
@@ -50,4 +52,4 @@ public class Product {
         entity.setQuantity(dto.getQuantity());
         return entity;
     }
-}*/
+}

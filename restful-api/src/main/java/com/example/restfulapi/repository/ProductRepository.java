@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product,Integer>, JpaSpecificationExecutor<Product> {
     @Query("select p from Product p where p.name like %:name%")
-    Product findByName(String name);
+    Product search(String name);
+    Product findProductByName(String name);
     List<Product> findProductsByCategoryId(int id);
-}
+
+ }

@@ -12,7 +12,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import static com.example.restfulapi.util.ValidationUtil.*;
 
-/*@Data
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductDTO {
@@ -30,6 +30,7 @@ public class ProductDTO {
     public static ProductDTO convertEntityToDTO(Product product){
 
         ProductDTO dto = new ProductDTO();
+        CategoryDTO categoryDTO = CategoryDTO.convertEntityToDTO(product.getCategory());
         dto.setId(product.getId());
         dto.setName(product.getName());
         dto.setPrice(product.getPrice());
@@ -39,9 +40,9 @@ public class ProductDTO {
         }else if (product.getQuantity() > 0){
             dto.setStatus(ProductStatus.AVAILABLE);
         }
-        dto.setCategory(CategoryDTO.convertEntityToDTO(product.getCategory()));
         dto.setCategoryId(product.getCategoryId());
+        dto.setCategory(categoryDTO);
         dto.setQuantity(product.getQuantity());
         return dto;
     }
-}*/
+}
