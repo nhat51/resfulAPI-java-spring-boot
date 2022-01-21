@@ -92,9 +92,9 @@ public class ProductController {
     }
 
     @RequestMapping(method = RequestMethod.GET,path = "detail/{id}")
-    private ResponseEntity<ResponseApi> findById(@PathVariable int id){
+    private ResponseEntity<?> findById(@PathVariable int id){
         return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseApi(HttpStatus.OK,"success",service.getById(id))
+               service.getById(id)
         );
     }
 

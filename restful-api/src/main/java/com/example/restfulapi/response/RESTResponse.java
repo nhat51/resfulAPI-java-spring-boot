@@ -136,12 +136,9 @@ public class RESTResponse {
             RESTResponse restResponse = new RESTResponse();
             restResponse.addResponse("status", this.status);
             restResponse.addResponse("message", this.message);
-            if (this.data.size() == 1) {
-                restResponse.addResponse("data", this.data.get(0));
 
-            } else {
-                restResponse.addResponse("data", this.data);
-            }
+            restResponse.addResponse("data", this.data);
+
             if (this.pagination != null) {
                 restResponse.addResponse("pagination", this.pagination);
             }

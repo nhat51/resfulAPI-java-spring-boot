@@ -19,6 +19,9 @@ public class SQLConstant {
     public static final String UPDATE = "UPDATE";
     public static final String SET = "SET";
     public static final String DELETE = "DELETE";
+    public static final String ASC = "ASCENDING";
+    public static final String DESC = "DESCENDING";
+    public static final String ORDER_BY = "ORDER BY";
 
     public static final String FOREIGN_KEY = "FOREIGN KEY";
     public static final String REFERENCES = "REFERENCES";

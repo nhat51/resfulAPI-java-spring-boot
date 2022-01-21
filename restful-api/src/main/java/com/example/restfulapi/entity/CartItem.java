@@ -1,4 +1,4 @@
-/*
+
 package com.example.restfulapi.entity;
 
 import lombok.AllArgsConstructor;
@@ -17,11 +17,10 @@ import javax.persistence.ManyToOne;
 public class CartItem {
 
     private Integer productId;
-    private double unitPrice;
+    private String productName;
+    private String thumbnail;
+    private double unitPrice; // giá tại thời điểm mua, sau đó giá sản phẩm có thể thay đổi.
     private int quantity;
 
-    @ManyToOne
-    private ShoppingCart shoppingCart;
-
 }
-*/
+

@@ -41,6 +41,7 @@ public class Product {
     private Set<OrderDetail> orderDetails = new HashSet<>();
 
 
+
     public static Product convertDTOtoEntity(ProductDTO dto){
         Product entity = new Product();
         entity.setId(dto.getId());

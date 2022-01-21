@@ -32,6 +32,9 @@ public class ProductSpecification implements org.springframework.data.jpa.domain
             } else {
                 return builder.equal(root.get(criteria.getKey()), criteria.getValue());
             }
+        }else if (criteria.getOperation().equalsIgnoreCase(SQLConstant.EQUAL)){
+            return builder.equal(
+                    root.<String>get(criteria.getKey()), criteria.getValue() );
         }
         return null;
     }

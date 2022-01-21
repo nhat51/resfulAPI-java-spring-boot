@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 @Service
 public class ProductServiceImpl implements ProductService{
@@ -32,25 +33,24 @@ public class ProductServiceImpl implements ProductService{
     private CategoryRepository categoryRepository;
     @Override
     public Page<Product> findAll(ObjectFilter filter) {
-        Specification spec = Specification.where(null);
+        Specification<Product> spec = Specification.where(null);
 
         PageRequest paging = PageRequest.of(filter.getPage() - 1, filter.getPageSize());
 
-        if (filter.getName() != null && filter.getName().length() > 0){
-            spec = spec.and(new ProductSpecification(new SearchCriteria(ObjectFilter.NAME, SQLConstant.EQUAL,filter.getName())));
+        if (filter.getNameProduct() != null && filter.getNameProduct().length() > 0){
+            spec = spec.and(new ProductSpecification(new SearchCriteria(ObjectFilter.NAME, SQLConstant.LIKE,filter.getNameProduct())));
+            System.out.println(filter.getNameProduct());
         }
         if (filter.getCategoryId() > 0){
-            spec = spec.and(new ProductSpecification(new SearchCriteria(ObjectFilter.ID,SQLConstant.EQUAL,filter.getCategoryId())));
+            System.out.println(filter.getCategoryId());
+            spec = spec.and(new ProductSpecification(new SearchCriteria("categoryId",SQLConstant.EQUAL,filter.getCategoryId())));
         }
         if (filter.getMaxPrice() > 0){
-            spec = spec.and(new ProductSpecification(new SearchCriteria(ObjectFilter.MAX_PRICE,SQLConstant.LESS_THAN_OR_EQUAL_TO,filter.getMaxPrice())));
+            spec = spec.and(new ProductSpecification(new SearchCriteria(ObjectFilter.PRICE,SQLConstant.GREATER_THAN_OR_EQUAL_TO,filter.getMaxPrice())));
         }
         if (filter.getMinPrice() > 0){
-            spec = spec.and(new ProductSpecification(new SearchCriteria(ObjectFilter.MIN_PRICE,SQLConstant.GREATER_THAN_OR_EQUAL_TO,filter.getMinPrice())));
+            spec = spec.and(new ProductSpecification(new SearchCriteria(ObjectFilter.PRICE,SQLConstant.LESS_THAN_OR_EQUAL_TO,filter.getMinPrice())));
         }
-       if (filter.getId() > 0){
-           spec = spec.and(new ProductSpecification(new SearchCriteria(ObjectFilter.ID,SQLConstant.EQUAL,filter.getId())));
-       }
         return productRepository.findAll(spec,paging);
     }
 
@@ -70,7 +70,6 @@ public class ProductServiceImpl implements ProductService{
         return new ResponseApi(HttpStatus.OK,"Success",product);
     }
 
-
     @Override
     public ResponseApi getById(int id) {
         Optional<Product> product = productRepository.findById(id);
@@ -80,8 +79,6 @@ public class ProductServiceImpl implements ProductService{
         ProductDTO dto = ProductDTO.convertEntityToDTO(product.get());
         return new ResponseApi(HttpStatus.OK,"Success",dto);
     }
-
-
 
     @Override
     public ResponseApi save(Product product) {
