@@ -29,7 +29,7 @@ public class ShoppingCart {
     }
 
     public Order prepareOrder(){
-        Order order = new Order(); // generate id, tính tổng tiền, set ngày tháng, set các thông
+        Order order = new Order(); // generate id, tính tổng tiền, set ngày tháng, set các thông tin
         Set<OrderDetail> orderDetails = new HashSet<>(); // chuyển từ cart item sang
         for (CartItem item :
                 this.getListItem()) {
