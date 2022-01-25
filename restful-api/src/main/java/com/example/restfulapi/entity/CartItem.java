@@ -1,4 +1,3 @@
-
 package com.example.restfulapi.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -7,16 +6,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+
 import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
+import java.util.Set;
 
-
-@Setter
 @Getter
-@NoArgsConstructor
+@Setter
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Table(name = "Cart_Items")
+@Table(name = "cart_items")
 public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +33,4 @@ public class CartItem {
     @JoinColumn(name = "cart_id",insertable = false,updatable = false)
     @JsonIgnore
     private Cart cart;
-
-
 }
-

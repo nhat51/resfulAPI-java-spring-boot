@@ -1,19 +1,20 @@
 package com.example.restfulapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import java.util.Set;
 
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter@Setter
 @Entity
-@Table(name = "Cart")
+@Table(name = "cart")
 public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,5 +22,6 @@ public class Cart {
     @Column(name = "customer_id")
     private Integer customerId;
     @OneToMany(mappedBy = "cart",cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<CartItem> items;
 }

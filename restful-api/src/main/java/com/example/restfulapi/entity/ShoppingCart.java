@@ -31,8 +31,7 @@ public class ShoppingCart {
     public Order prepareOrder(){
         Order order = new Order(); // generate id, tính tổng tiền, set ngày tháng, set các thông tin
         Set<OrderDetail> orderDetails = new HashSet<>(); // chuyển từ cart item sang
-        for (CartItem item :
-                this.getListItem()) {
+        for (CartItem item : this.getListItem()) {
             OrderDetail orderDetail = new OrderDetail();
             // mapping
             orderDetails.add(orderDetail);
@@ -84,6 +83,7 @@ public class ShoppingCart {
             item.setQuantity(quantity);
         }
         mapItem.put(product.getId(), item);
+
     }
 
     public void update(Product product, int quantity) {
