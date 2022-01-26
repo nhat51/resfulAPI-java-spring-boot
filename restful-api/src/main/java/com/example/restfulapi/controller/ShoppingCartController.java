@@ -7,6 +7,8 @@ import com.example.restfulapi.entity.ShoppingCart;
 import com.example.restfulapi.repository.ProductRepository;
 import com.example.restfulapi.service.cart.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -34,6 +36,7 @@ public class ShoppingCartController {
     public Cart addToCart(@RequestParam(name = "access_token") String access_token, @RequestBody CartItem cartItem){
         return service.addToCart(access_token,cartItem);
     }
+
 
 
     @RequestMapping(method = RequestMethod.GET)

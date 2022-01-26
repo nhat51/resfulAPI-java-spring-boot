@@ -8,8 +8,9 @@ import java.util.List;
 
 public interface CartService {
         Cart addToCart(String access_token, CartItem cartItem);
-        List<CartItem> getAllItem();
         Cart update(String access_token,CartItem cartItem);
-        void remove(int productId);
+        Cart remove(String access_token,int productId);
+        Cart clear(String access_token);
+        Cart getCart(String access_token);
         double calculateTotalPrice();
 }

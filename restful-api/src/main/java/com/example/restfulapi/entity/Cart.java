@@ -22,6 +22,5 @@ public class Cart {
     @Column(name = "access_token")
     private String accessToken;
     @OneToMany(mappedBy = "cart",cascade = CascadeType.ALL)
-    @JsonIgnore
     private Set<CartItem> items;
 }
