@@ -19,8 +19,8 @@ public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(name = "customer_id")
-    private Integer customerId;
+    @Column(name = "access_token")
+    private String accessToken;
     @OneToMany(mappedBy = "cart",cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<CartItem> items;

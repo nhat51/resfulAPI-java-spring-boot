@@ -1,17 +1,21 @@
 package com.example.restfulapi.service.customer;
 
 import com.example.restfulapi.entity.Customer;
+import com.example.restfulapi.repository.CartItemRepository;
 import com.example.restfulapi.repository.CustomerRepository;
 import com.example.restfulapi.response.ResponseApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class CustomerServiceImpl implements CustomerService{
 
     @Autowired
     CustomerRepository customerRepository;
+
 
     @Override
     public ResponseApi finAll() {

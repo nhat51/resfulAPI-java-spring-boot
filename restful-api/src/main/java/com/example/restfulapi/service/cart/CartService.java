@@ -7,10 +7,9 @@ import com.example.restfulapi.entity.Product;
 import java.util.List;
 
 public interface CartService {
-        void createCart(Cart cart);
-        Cart addToCart(int customerId, CartItem cartItem);
+        Cart addToCart(String access_token, CartItem cartItem);
         List<CartItem> getAllItem();
-        void update(Product product,int quantity);
+        Cart update(String access_token,CartItem cartItem);
         void remove(int productId);
         double calculateTotalPrice();
 }

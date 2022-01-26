@@ -3,15 +3,15 @@ package com.example.restfulapi.service.cart;
 import com.example.restfulapi.entity.Cart;
 import com.example.restfulapi.entity.CartItem;
 import com.example.restfulapi.entity.Product;
+import com.example.restfulapi.repository.CartItemRepository;
 import com.example.restfulapi.repository.CartRepository;
+import com.example.restfulapi.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.transaction.Transactional;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -19,31 +19,36 @@ public class CartServiceImpl implements CartService {
     @Autowired
     CartRepository cartRepository;
 
+    @Autowired
+    ProductRepository productRepository;
 
+    @Autowired
+    CartItemRepository cartItemRepository;
     @Override
-    public void createCart(Cart cart) {
-
-    }
-
-    @Override
-    public Cart addToCart(int customerId, CartItem cartItem) {
-        Cart exist = cartRepository.findCartByCustomerId(customerId);
+    public Cart addToCart(String access_token, CartItem cartItem) {
+        Cart exist = cartRepository.findCartByAccessToken(access_token);
+        Product product = productRepository.getById(cartItem.getProductId());
+        cartItem.setProductName(product.getName());
+        cartItem.setThumbnail(product.getThumbnail());
+        cartItem.setUnitPrice(product.getPrice());
+        //Kiểm tra người dùng có giỏ hàng hay chưa
         if (exist != null) {
             Set<CartItem> listCartItem = exist.getItems();
-            //kiem tra san pham co to tai hay k
             for (CartItem item : listCartItem) {
-                if (item.getProductId() == cartItem.getProductId()) {
+                //kiểm tra sản phẩm có tồn tại trong giỏ hàng hay không
+                if (item.getProductId()==cartItem.getProductId()) {
                     item.setQuantity(item.getQuantity() + 1);
-                    break;
+                    return cartRepository.save(exist);
                 }
             }
+            cartItem.setCartId(exist.getId());
             listCartItem.add(cartItem);
             exist.setItems(listCartItem);
             return cartRepository.save(exist);
         }
         Cart newCart = new Cart();
         Cart saved = cartRepository.save(newCart);
-        newCart.setCustomerId(customerId);
+        newCart.setAccessToken(access_token);
         Set<CartItem> newCartItem = new HashSet<>();
         newCartItem.add(cartItem);
         cartItem.setCartId(saved.getId());
@@ -54,15 +59,33 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public List<CartItem> getAllItem() {
-        return null;
+        return cartItemRepository.findAll();
     }
 
-    @Override
-    public void update(Product product, int quantity) {
-        if (product == null || quantity <= 0) {
-            return;
+   /* @Override
+    public Cart update(@RequestBody CartItem cartItem) {
+        // lay customer id tu auth hoac la trong body
+        Cart exist = cartRepository.findCartByCustomerId();
+        Set<CartItem> cartItemList = exist.getItems();
+        for (CartItem item : cartItemList) {
+            if (item.getId() == cartItem.getProductId()){
+                item.setQuantity(cartItem.getQuantity());
+                cartItemRepository.save(item);
+            }
         }
-
+        return exist;
+    }*/
+    @Override
+    public Cart update(String access_token,CartItem cartItem) {
+        Cart exist = cartRepository.findCartByAccessToken(access_token);
+        Set<CartItem> cartItemList = exist.getItems();
+        for (CartItem item : cartItemList) {
+            if (item.getProductId() == cartItem.getProductId()){
+                item.setQuantity(cartItem.getQuantity());
+                cartItemRepository.save(item);
+            }
+        }
+        return exist;
     }
 
     @Override
