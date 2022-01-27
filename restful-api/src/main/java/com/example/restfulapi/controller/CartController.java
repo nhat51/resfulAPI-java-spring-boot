@@ -31,14 +31,24 @@ public class CartController {
        return service.findAll();
     }*/
 
+    @RequestMapping(method = RequestMethod.POST,path = "submitOrder")
+    public ResponseEntity<?> submitOrder(@RequestParam(name = "access_token") String access_token){
+        return ResponseEntity.ok().body(
+                service.prepareOrder(access_token)
+        );
+    }
     @RequestMapping(method = RequestMethod.POST, path = "add")
-    public Cart addToCart(@RequestParam(name = "access_token") String access_token, @RequestBody CartItem cartItem){
-        return service.addToCart(access_token,cartItem);
+    public ResponseEntity<?> addToCart(@RequestParam(name = "access_token") String access_token, @RequestBody CartItem cartItem){
+        return ResponseEntity.ok().body(
+                service.addToCart(access_token,cartItem)
+        );
     }
 
     @RequestMapping(method = RequestMethod.PUT,path = "update")
-    public Cart updateCart(@RequestParam(name = "access_token") String access_token, @RequestBody CartItem cartItem){
-        return service.update(access_token,cartItem);
+    public ResponseEntity<?> updateCart(@RequestParam(name = "access_token") String access_token, @RequestBody CartItem cartItem){
+        return ResponseEntity.ok().body(
+                service.update(access_token,cartItem)
+        );
 
     }
 
@@ -55,10 +65,13 @@ public class CartController {
                 service.clear(access_token)
         );
     }
+
     @RequestMapping(method = RequestMethod.GET)
-    public Cart getCart(@RequestParam(name = "access_token") String accessToken){
+    public ResponseEntity<?> getCart(@RequestParam(name = "access_token") String accessToken){
         int accountId = 1; // lấy từ accessToken.
-        Cart currentShoppingCart = service.getCart(accessToken); // cho người dùng hiện tại.
-        return currentShoppingCart;
+       /* Cart currentShoppingCart = service.getCart(accessToken);*/ // cho người dùng hiện tại.
+        return ResponseEntity.ok().body(
+                service.getCart(accessToken)
+        );
     }
 }

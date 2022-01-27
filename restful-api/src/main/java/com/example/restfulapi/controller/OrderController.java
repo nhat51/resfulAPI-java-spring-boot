@@ -18,10 +18,11 @@ public class OrderController {
     public ResponseEntity<ResponseApi> getOrders(){
         return  ResponseEntity.ok(service.listOrder());
     }
+/*    @PostMapping(path = "save")
+    public ResponseEntity<?> save(@RequestBody Order order){
 
-    @PostMapping(path = "save")
-    public ResponseEntity<ResponseApi> save(@RequestBody Order order
-                                            ){
-        return  ResponseEntity.ok(service.createOrder(order));
-    }
+        return  ResponseEntity.ok().body(
+                service.createOrder(order)
+        );
+    }*/
 }

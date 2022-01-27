@@ -32,10 +32,10 @@ public class ShoppingCartController {
 //       return service.findAll();
 //    }
 
-    @RequestMapping(method = RequestMethod.POST, path = "add")
+  /*  @RequestMapping(method = RequestMethod.POST, path = "add")
     public Cart addToCart(@RequestParam(name = "access_token") String access_token, @RequestBody CartItem cartItem){
         return service.addToCart(access_token,cartItem);
-    }
+    }*/
 
 
 

@@ -1,18 +1,19 @@
 package com.example.restfulapi.service.cart;
 
-import com.example.restfulapi.entity.Cart;
-import com.example.restfulapi.entity.CartItem;
-import com.example.restfulapi.entity.Product;
+import com.example.restfulapi.entity.*;
 import com.example.restfulapi.repository.CartItemRepository;
 import com.example.restfulapi.repository.CartRepository;
 import com.example.restfulapi.repository.ProductRepository;
 import com.example.restfulapi.response.ResponseApi;
+import com.example.restfulapi.service.order.OrderService;
+import com.example.restfulapi.status.OrderStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -26,6 +27,9 @@ public class CartServiceImpl implements CartService {
 
     @Autowired
     CartItemRepository cartItemRepository;
+
+    @Autowired
+    OrderService orderService;
     @Override
     public ResponseApi addToCart(String access_token, CartItem cartItem) {
         Cart exist = cartRepository.findCartByAccessToken(access_token);
@@ -40,15 +44,21 @@ public class CartServiceImpl implements CartService {
         if (exist != null) {
             Set<CartItem> listCartItem = exist.getItems();
             for (CartItem item : listCartItem) {
-                //kiểm tra sản phẩm có tồn tại trong giỏ hàng hay không
+                /*
+                kiểm tra sản phẩm có tồn tại trong giỏ hàng hay không
+                * nếu có thì tăng quantity
+                *
+                * */
                 if (item.getProductId()==cartItem.getProductId()) {
                     item.setQuantity(item.getQuantity() + 1);
-                   cartRepository.save(exist);
+                    exist.setTotalMoney();
+                    return new ResponseApi(HttpStatus.OK,"success",cartRepository.save(exist));
                 }
             }
             cartItem.setCartId(exist.getId());
             listCartItem.add(cartItem);
             exist.setItems(listCartItem);
+            exist.setTotalMoney();
             return new ResponseApi(HttpStatus.OK,"success",cartRepository.save(exist));
         }
         Cart newCart = new Cart();
@@ -58,11 +68,12 @@ public class CartServiceImpl implements CartService {
         newCartItem.add(cartItem);
         cartItem.setCartId(saved.getId());
         saved.setItems(newCartItem);
-        return cartRepository.save(newCart);
+        saved.setTotalMoney();
+        return new ResponseApi(HttpStatus.OK,"success",newCart);
     }
 
     @Override
-    public Cart update(String access_token,CartItem cartItem) {
+    public ResponseApi update(String access_token,CartItem cartItem) {
         Cart exist = cartRepository.findCartByAccessToken(access_token);
         Set<CartItem> cartItemList = exist.getItems();
         for (CartItem item : cartItemList) {
@@ -71,11 +82,11 @@ public class CartServiceImpl implements CartService {
                 cartItemRepository.save(item);
             }
         }
-        return exist;
+        return new ResponseApi(HttpStatus.OK,"updated",exist);
     }
 
     @Override
-    public Cart remove(String access_token,int productId) {
+    public ResponseApi remove(String access_token,int productId) {
         Cart exist = cartRepository.findCartByAccessToken(access_token);
         Set<CartItem> itemSet = exist.getItems();
         for (CartItem item: itemSet) {
@@ -84,23 +95,49 @@ public class CartServiceImpl implements CartService {
                 cartItemRepository.delete(item);
             }
         }
-        return cartRepository.save(exist);
+        exist.setTotalMoney();
+        return new ResponseApi(HttpStatus.OK,"success",exist);
     }
 
     @Override
-    public Cart clear(String access_token) {
+    public ResponseApi clear(String access_token) {
         Cart exist = cartRepository.findCartByAccessToken(access_token);
         List<CartItem> cartItemList = cartItemRepository.findCartItemsByCart_Id(exist.getId());
         for (CartItem item : cartItemList) {
             cartItemRepository.delete(item);
         }
-        return cartRepository.save(exist);
+        exist.setTotalMoney();
+        return new ResponseApi(HttpStatus.OK,"success",cartRepository.save(exist));
     }
 
     @Override
-    public Cart getCart(String access_token) {
+    public ResponseApi getCart(String access_token) {
         Cart cart = cartRepository.findCartByAccessToken(access_token);
-        return cart;
+        cart.setTotalMoney();
+        return new ResponseApi(HttpStatus.OK,"success",cart);
+    }
+
+    @Override
+    public Order prepareOrder(String access_token) {
+        //tìm giỏ hàng theo access token
+        Cart cart = cartRepository.findCartByAccessToken(access_token);
+        Order order = new Order(); // generate id, tính tổng tiền, set ngày tháng, set các thông tin
+        Set<OrderDetail> orderDetails = new HashSet<>();
+        // chuyển từ cart item sang order detail
+        for (CartItem cartItem : cart.getItems()) {
+            OrderDetail orderDetail = new OrderDetail();
+            orderDetail.setQuantity(cartItem.getQuantity());
+            orderDetail.setUnitPrice(cartItem.getUnitPrice());
+            orderDetail.setProductId(cartItem.getProductId());
+            orderDetails.add(orderDetail);
+        }
+        order.setCustomerId(1);
+        order.setStatus(OrderStatus.PENDING);
+        order.setCreated_at(LocalDate.now());
+        order.setTotalPrice(cart.getTotalPrice());
+        order.setOrderDetails(orderDetails);
+       /* return orderService.createOrder(order);*/
+        return order;
     }
 
     @Override

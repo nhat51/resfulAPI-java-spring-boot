@@ -1,14 +1,8 @@
 package com.example.restfulapi.service.order;
 
-import com.example.restfulapi.entity.Order;
-import com.example.restfulapi.entity.OrderDetail;
-import com.example.restfulapi.entity.OrderDetailId;
-import com.example.restfulapi.entity.Product;
+import com.example.restfulapi.entity.*;
 import com.example.restfulapi.entityDTO.OrderDTO;
-import com.example.restfulapi.repository.CustomerRepository;
-import com.example.restfulapi.repository.OrderDetailRepository;
-import com.example.restfulapi.repository.OrderRepository;
-import com.example.restfulapi.repository.ProductRepository;
+import com.example.restfulapi.repository.*;
 import com.example.restfulapi.response.ResponseApi;
 import com.example.restfulapi.service.product.ProductService;
 import com.example.restfulapi.status.OrderStatus;
@@ -36,13 +30,16 @@ public class OrderServiceImpl implements OrderService{
     @Autowired
     OrderDetailRepository orderDetailRepository;
 
+    @Autowired
+    CartRepository cartRepository;
+
     @Override
     public ResponseApi listOrder() {
         return new ResponseApi(HttpStatus.OK,"success",orderRepository.findAll());
     }
 
     @Override
-    public ResponseApi createOrder(Order order) {
+    public Order createOrder(String access_token,Order order) {
         Order newOrder = new Order();
         newOrder.setShipName(order.getShipName());
         newOrder.setCreated_at(LocalDate.now());
@@ -50,14 +47,15 @@ public class OrderServiceImpl implements OrderService{
         newOrder.setShipAddress(order.getShipAddress());
         newOrder.setCustomerId(order.getCustomerId());
         newOrder.setStatus(OrderStatus.PENDING);
+        //tìm cart theo access token
+        Cart cart = cartRepository.findCartByAccessToken(access_token);
         Set<OrderDetail> listOrderDetail = new HashSet<>();
-        for (OrderDetail od: order.getOrderDetails()) {
+        /*for (OrderDetail od: order.getOrderDetails()) {
             Product product = productRepository.findById(od.getId().getProductId()).get();
             System.out.println(product.getId());
             OrderDetailId key = new OrderDetailId();
 
             key.setProductId(od.getId().getProductId());
-            key.setOrderId(od.getOrderId());
 
             OrderDetail orderDetail = new OrderDetail();
 
@@ -70,26 +68,11 @@ public class OrderServiceImpl implements OrderService{
             orderDetail.setUnitPrice(od.getUnitPrice());
             orderDetail.setOrder(newOrder);
             listOrderDetail.add(orderDetail);
-           /* orderDetailRepository.save(orderDetail);
-            orderRepository.save(newOrder);*/
-        }
+        }*/
+
         newOrder.setOrderDetails(listOrderDetail);
         orderRepository.save(newOrder);
-        /*newOrder.getOrderDetails().addAll((order.getOrderDetails()
-                        .stream()
-                        .map(
-                                orderDetail ->{
-                                    Product product = productRepository.getById(orderDetail.getProduct().getId());
-                                    OrderDetail newOrderDetail = new OrderDetail();
-                                    newOrderDetail.setProduct(product);
-                                    newOrderDetail.setOrder(newOrder);
-                                    newOrderDetail.setUnitPrice(10);
-                                    newOrderDetail.setQuantity(20);
-                                    return newOrderDetail;
-                }).collect(Collectors.toList())
-        ));
-        orderRepository.save(newOrder);*/
-        return new ResponseApi(HttpStatus.CREATED,"success", newOrder);
+        return newOrder;
     }
 
     @Override
