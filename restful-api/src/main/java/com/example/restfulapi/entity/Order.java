@@ -27,8 +27,7 @@ public class Order {
     @Column(name = "ship_address")
     private String shipAddress;
     @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    private OrderStatus status;
+    private String status;
     @Column(name = "customer_id")
     private int customerId;
     @Column(name = "total_price")
@@ -37,7 +36,7 @@ public class Order {
     private LocalDate created_at;
     @Column(name = "updated_at")
     private LocalDate updated_at;
-
+    private String payment_status;
     @ManyToOne
     @JoinColumn(name = "customer_id",insertable = false,updatable = false)
     @JsonIgnore

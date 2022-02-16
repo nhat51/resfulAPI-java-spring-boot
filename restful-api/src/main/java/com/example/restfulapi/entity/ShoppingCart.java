@@ -163,7 +163,7 @@ public class ShoppingCart {
         //shoppingCart.clear();
 
         List<CartItem> items = shoppingCart.getListItem();
-        System.out.println(shoppingCart.getTotalPrice());
+        System.out.println(shoppingCart);
     }
 }
 

@@ -1,12 +1,16 @@
 package com.example.restfulapi.service.cart;
 
 import com.example.restfulapi.entity.*;
+import com.example.restfulapi.entityDTO.OrderDto;
 import com.example.restfulapi.repository.CartItemRepository;
 import com.example.restfulapi.repository.CartRepository;
+import com.example.restfulapi.repository.OrderRepository;
 import com.example.restfulapi.repository.ProductRepository;
 import com.example.restfulapi.response.ResponseApi;
 import com.example.restfulapi.service.order.OrderService;
 import com.example.restfulapi.status.OrderStatus;
+import com.example.restfulapi.status.Status;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -15,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.*;
+
+import static com.example.restfulapi.queue.Config.*;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -29,7 +35,10 @@ public class CartServiceImpl implements CartService {
     CartItemRepository cartItemRepository;
 
     @Autowired
-    OrderService orderService;
+    OrderRepository orderRepository;
+
+    @Autowired
+    RabbitTemplate rabbitTemplate;
     @Override
     public ResponseApi addToCart(String access_token, CartItem cartItem) {
         Cart exist = cartRepository.findCartByAccessToken(access_token);
@@ -46,7 +55,7 @@ public class CartServiceImpl implements CartService {
             for (CartItem item : listCartItem) {
                 /*
                 kiểm tra sản phẩm có tồn tại trong giỏ hàng hay không
-                * nếu có thì tăng quantity
+                * nếu có thì tăng quantity và lưu lại
                 *
                 * */
                 if (item.getProductId()==cartItem.getProductId()) {
@@ -69,7 +78,7 @@ public class CartServiceImpl implements CartService {
         cartItem.setCartId(saved.getId());
         saved.setItems(newCartItem);
         saved.setTotalMoney();
-        return new ResponseApi(HttpStatus.OK,"success",newCart);
+        return new ResponseApi(HttpStatus.OK,"success",cartRepository.save(newCart));
     }
 
     @Override
@@ -101,13 +110,14 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public ResponseApi clear(String access_token) {
+        //tìm cái cart theo access token
         Cart exist = cartRepository.findCartByAccessToken(access_token);
+        Set<CartItem> itemSet = exist.getItems();
+        itemSet.clear();
         List<CartItem> cartItemList = cartItemRepository.findCartItemsByCart_Id(exist.getId());
-        for (CartItem item : cartItemList) {
-            cartItemRepository.delete(item);
-        }
+        cartItemRepository.deleteAll(cartItemList);
         exist.setTotalMoney();
-        return new ResponseApi(HttpStatus.OK,"success",cartRepository.save(exist));
+        return new ResponseApi(HttpStatus.OK,"success",exist);
     }
 
     @Override
@@ -117,6 +127,9 @@ public class CartServiceImpl implements CartService {
         return new ResponseApi(HttpStatus.OK,"success",cart);
     }
 
+    /*
+    * Chuyển từ cart sang order
+    * */
     @Override
     public Order prepareOrder(String access_token) {
         //tìm giỏ hàng theo access token
@@ -125,18 +138,37 @@ public class CartServiceImpl implements CartService {
         Set<OrderDetail> orderDetails = new HashSet<>();
         // chuyển từ cart item sang order detail
         for (CartItem cartItem : cart.getItems()) {
+            Product product = productRepository.getById(cartItem.getProductId());
+            OrderDetailId key = new OrderDetailId();
+
+            key.setProductId(cartItem.getProductId());
             OrderDetail orderDetail = new OrderDetail();
+
+            orderDetail.setProduct(product);
+            orderDetail.setOrder(order);
+            orderDetail.setId(key);
+
             orderDetail.setQuantity(cartItem.getQuantity());
             orderDetail.setUnitPrice(cartItem.getUnitPrice());
             orderDetail.setProductId(cartItem.getProductId());
             orderDetails.add(orderDetail);
         }
         order.setCustomerId(1);
-        order.setStatus(OrderStatus.PENDING);
+        order.setStatus(OrderStatus.PENDING.name());
+        order.setPayment_status(Status.PaymentStatus.PENDING.name());
         order.setCreated_at(LocalDate.now());
         order.setTotalPrice(cart.getTotalPrice());
         order.setOrderDetails(orderDetails);
-       /* return orderService.createOrder(order);*/
+        orderRepository.save(order);
+        clear(access_token);
+        cart.setTotalMoney();
+        cartRepository.save(cart);
+        try{
+            OrderDto orderDto = new OrderDto(order);
+            rabbitTemplate.convertAndSend(DIRECT_EXCHANGE,DIRECT_ROUTING_KEY_ORDER,orderDto);
+        }catch (Exception e){
+
+        }
         return order;
     }
 

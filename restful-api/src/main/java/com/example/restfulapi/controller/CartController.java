@@ -15,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/cart")
+@CrossOrigin("*")
 public class CartController {
 
     public static HashMap<Integer, ShoppingCart> listShoppingCart; // bựa

@@ -1,7 +1,6 @@
 package com.example.restfulapi.service.order;
 
 import com.example.restfulapi.entity.*;
-import com.example.restfulapi.entityDTO.OrderDTO;
 import com.example.restfulapi.repository.*;
 import com.example.restfulapi.response.ResponseApi;
 import com.example.restfulapi.service.product.ProductService;
@@ -46,7 +45,7 @@ public class OrderServiceImpl implements OrderService{
         newOrder.setUpdated_at(order.getUpdated_at());
         newOrder.setShipAddress(order.getShipAddress());
         newOrder.setCustomerId(order.getCustomerId());
-        newOrder.setStatus(OrderStatus.PENDING);
+        newOrder.setStatus(OrderStatus.PENDING.name());
         //tìm cart theo access token
         Cart cart = cartRepository.findCartByAccessToken(access_token);
         Set<OrderDetail> listOrderDetail = new HashSet<>();
