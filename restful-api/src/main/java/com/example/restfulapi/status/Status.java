@@ -8,7 +8,7 @@ public enum Status {
     }
 
     public enum PaymentStatus {
-        PENDING, NOT_ENOUGH_BALANCE, DONE, REFUND, REFUNDED
+        PAID, UNPAID, REFUND, REFUNDED
     }
 
     public enum OrderStatus {
@@ -18,5 +18,10 @@ public enum Status {
         REFUND,
         DONE,
         DELETED
+    }
+    public static class OrderMessage{
+        public static String NOT_ENOUGH_BALANCE = "Balance is not enough";
+        public static String NOT_FOUND_USER = "Can not found user";
+        public static String NOT_FOUND_WALLET = "Wallet not found";
     }
 }

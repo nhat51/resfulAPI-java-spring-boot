@@ -1,6 +1,5 @@
 package com.example.restfulapi.entity;
 
-import com.example.restfulapi.status.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

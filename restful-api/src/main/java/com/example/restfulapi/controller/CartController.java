@@ -2,6 +2,7 @@ package com.example.restfulapi.controller;
 
 import com.example.restfulapi.entity.Cart;
 import com.example.restfulapi.entity.CartItem;
+import com.example.restfulapi.entity.Order;
 import com.example.restfulapi.entity.ShoppingCart;
 import com.example.restfulapi.repository.ProductRepository;
 import com.example.restfulapi.service.cart.CartService;
@@ -33,9 +34,9 @@ public class CartController {
     }*/
 
     @RequestMapping(method = RequestMethod.POST,path = "submitOrder")
-    public ResponseEntity<?> submitOrder(@RequestParam(name = "access_token") String access_token){
+    public ResponseEntity<?> submitOrder(@RequestParam(name = "access_token") String access_token,@RequestBody Order order){
         return ResponseEntity.ok().body(
-                service.prepareOrder(access_token)
+                service.prepareOrder(access_token,order)
         );
     }
     @RequestMapping(method = RequestMethod.POST, path = "add")

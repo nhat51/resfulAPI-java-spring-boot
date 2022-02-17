@@ -14,6 +14,6 @@ public interface CartService {
         ResponseApi remove(String access_token,int productId);
         ResponseApi clear(String access_token);
         ResponseApi getCart(String access_token);
-        Order prepareOrder(String access_token);
+        Order prepareOrder(String access_token,Order order);
         double calculateTotalPrice();
 }

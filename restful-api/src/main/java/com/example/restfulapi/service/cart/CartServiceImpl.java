@@ -7,16 +7,12 @@ import com.example.restfulapi.repository.CartRepository;
 import com.example.restfulapi.repository.OrderRepository;
 import com.example.restfulapi.repository.ProductRepository;
 import com.example.restfulapi.response.ResponseApi;
-import com.example.restfulapi.service.order.OrderService;
-import com.example.restfulapi.status.OrderStatus;
 import com.example.restfulapi.status.Status;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -131,10 +127,10 @@ public class CartServiceImpl implements CartService {
     * Chuyển từ cart sang order
     * */
     @Override
-    public Order prepareOrder(String access_token) {
+    public Order prepareOrder(String access_token,Order order) {
         //tìm giỏ hàng theo access token
         Cart cart = cartRepository.findCartByAccessToken(access_token);
-        Order order = new Order(); // generate id, tính tổng tiền, set ngày tháng, set các thông tin
+        // generate id, tính tổng tiền, set ngày tháng, set các thông tin
         Set<OrderDetail> orderDetails = new HashSet<>();
         // chuyển từ cart item sang order detail
         for (CartItem cartItem : cart.getItems()) {
@@ -153,9 +149,9 @@ public class CartServiceImpl implements CartService {
             orderDetail.setProductId(cartItem.getProductId());
             orderDetails.add(orderDetail);
         }
-        order.setCustomerId(1);
-        order.setStatus(OrderStatus.PENDING.name());
-        order.setPayment_status(Status.PaymentStatus.PENDING.name());
+        order.setCustomerId(2);
+        order.setStatus(Status.OrderStatus.PENDING.name());
+        order.setPayment_status(Status.PaymentStatus.UNPAID.name());
         order.setCreated_at(LocalDate.now());
         order.setTotalPrice(cart.getTotalPrice());
         order.setOrderDetails(orderDetails);

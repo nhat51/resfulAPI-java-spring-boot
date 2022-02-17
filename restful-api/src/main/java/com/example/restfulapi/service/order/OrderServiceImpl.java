@@ -3,8 +3,6 @@ package com.example.restfulapi.service.order;
 import com.example.restfulapi.entity.*;
 import com.example.restfulapi.repository.*;
 import com.example.restfulapi.response.ResponseApi;
-import com.example.restfulapi.service.product.ProductService;
-import com.example.restfulapi.status.OrderStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -12,7 +10,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService{
@@ -45,7 +42,7 @@ public class OrderServiceImpl implements OrderService{
         newOrder.setUpdated_at(order.getUpdated_at());
         newOrder.setShipAddress(order.getShipAddress());
         newOrder.setCustomerId(order.getCustomerId());
-        newOrder.setStatus(OrderStatus.PENDING.name());
+//        newOrder.setStatus(OrderStatus.PENDING.name());
         //tìm cart theo access token
         Cart cart = cartRepository.findCartByAccessToken(access_token);
         Set<OrderDetail> listOrderDetail = new HashSet<>();

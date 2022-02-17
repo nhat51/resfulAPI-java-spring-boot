@@ -18,6 +18,7 @@ public class OrderDto {
     private double totalPrice;
     private String paymentStatus;
     private String orderStatus;
+    private String message;
 
     public OrderDto(Order order){
         this.orderId = order.getId();
