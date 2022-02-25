@@ -3,19 +3,22 @@ package com.example.restfulapi.status;
 public enum Status {
     ACTIVE,DELETE;
 
-    public enum TransactionStatus {
-        SUCCESS, FAIL
+    public enum InventoryStatus {
+        PENDING,
+        OUT_OF_STOCK,
+        DONE,
+        RETURN,
+        RETURNED
     }
 
     public enum PaymentStatus {
-        PAID, UNPAID, REFUND, REFUNDED
+        PENDING,PAID, UNPAID, REFUND, REFUNDED
     }
 
     public enum OrderStatus {
         PENDING,
         CONFIRM,
         REJECT,
-        REFUND,
         DONE,
         DELETED
     }

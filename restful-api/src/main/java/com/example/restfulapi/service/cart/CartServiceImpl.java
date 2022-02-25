@@ -5,7 +5,6 @@ import com.example.restfulapi.entityDTO.OrderDto;
 import com.example.restfulapi.repository.CartItemRepository;
 import com.example.restfulapi.repository.CartRepository;
 import com.example.restfulapi.repository.OrderRepository;
-import com.example.restfulapi.repository.ProductRepository;
 import com.example.restfulapi.response.ResponseApi;
 import com.example.restfulapi.status.Status;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -24,8 +23,7 @@ public class CartServiceImpl implements CartService {
     @Autowired
     CartRepository cartRepository;
 
-    @Autowired
-    ProductRepository productRepository;
+
 
     @Autowired
     CartItemRepository cartItemRepository;
@@ -38,13 +36,6 @@ public class CartServiceImpl implements CartService {
     @Override
     public ResponseApi addToCart(String access_token, CartItem cartItem) {
         Cart exist = cartRepository.findCartByAccessToken(access_token);
-        Product product = productRepository.getById(cartItem.getProductId());
-        if (product == null){
-            return new ResponseApi(HttpStatus.NOT_FOUND,"product not found","");
-        }
-        cartItem.setProductName(product.getName());
-        cartItem.setThumbnail(product.getThumbnail());
-        cartItem.setUnitPrice(product.getPrice());
         //Kiểm tra người dùng có giỏ hàng hay chưa
         if (exist != null) {
             Set<CartItem> listCartItem = exist.getItems();
@@ -127,23 +118,26 @@ public class CartServiceImpl implements CartService {
     * Chuyển từ cart sang order
     * */
     @Override
-    public Order prepareOrder(String access_token,Order order) {
+    public ResponseApi prepareOrder(String access_token,Order order) {
         //tìm giỏ hàng theo access token
         Cart cart = cartRepository.findCartByAccessToken(access_token);
+        if (cart.getItems().size() == 0){
+            return new ResponseApi(HttpStatus.BAD_REQUEST,"Bad request","Cart is empty");
+        }
         // generate id, tính tổng tiền, set ngày tháng, set các thông tin
         Set<OrderDetail> orderDetails = new HashSet<>();
         // chuyển từ cart item sang order detail
         for (CartItem cartItem : cart.getItems()) {
-            Product product = productRepository.getById(cartItem.getProductId());
             OrderDetailId key = new OrderDetailId();
 
             key.setProductId(cartItem.getProductId());
             OrderDetail orderDetail = new OrderDetail();
 
-            orderDetail.setProduct(product);
-            orderDetail.setOrder(order);
             orderDetail.setId(key);
+            orderDetail.setOrder(order);
 
+            orderDetail.setProduct_name(cartItem.getProductName());
+            orderDetail.setProductId(cartItem.getProductId());
             orderDetail.setQuantity(cartItem.getQuantity());
             orderDetail.setUnitPrice(cartItem.getUnitPrice());
             orderDetail.setProductId(cartItem.getProductId());
@@ -151,7 +145,8 @@ public class CartServiceImpl implements CartService {
         }
         order.setCustomerId(2);
         order.setStatus(Status.OrderStatus.PENDING.name());
-        order.setPayment_status(Status.PaymentStatus.UNPAID.name());
+        order.setPayment_status(Status.PaymentStatus.PENDING.name());
+        order.setInventory_status(Status.InventoryStatus.PENDING.name());
         order.setCreated_at(LocalDate.now());
         order.setTotalPrice(cart.getTotalPrice());
         order.setOrderDetails(orderDetails);
@@ -161,11 +156,12 @@ public class CartServiceImpl implements CartService {
         cartRepository.save(cart);
         try{
             OrderDto orderDto = new OrderDto(order);
-            rabbitTemplate.convertAndSend(DIRECT_EXCHANGE,DIRECT_ROUTING_KEY_ORDER,orderDto);
+            rabbitTemplate.convertAndSend(DIRECT_EXCHANGE,DIRECT_ROUTING_KEY_PAY,orderDto);
+            rabbitTemplate.convertAndSend(DIRECT_EXCHANGE,DIRECT_ROUTING_KEY_INVENT,orderDto);
         }catch (Exception e){
 
         }
-        return order;
+        return new ResponseApi(HttpStatus.CREATED,"Success",order);
     }
 
     @Override

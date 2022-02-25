@@ -12,7 +12,7 @@ import java.io.Serializable;
 @Setter
 @Getter
 public class OrderDetailId implements Serializable {
-    @Column(name = "customer_id")
+    @Column(name = "order_id")
     private int orderId;
 
     @Column(name = "product_id")

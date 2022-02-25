@@ -8,7 +8,7 @@ public interface OrderService {
     ResponseApi listOrder();
     Order createOrder(String access_token,Order order);
     ResponseApi findOrder(int id);
-    ResponseApi findOrderByUsername(String username);
+    ResponseApi findOrderByCustomerId(int customerId);
     ResponseApi createOrderDetail(OrderDetail orderDetail);
     ResponseApi deleteOrder(int order);
 

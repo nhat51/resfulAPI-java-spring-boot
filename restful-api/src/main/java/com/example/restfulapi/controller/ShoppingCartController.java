@@ -1,31 +1,21 @@
 package com.example.restfulapi.controller;
 
-import com.example.restfulapi.entity.Cart;
-import com.example.restfulapi.entity.CartItem;
-import com.example.restfulapi.entity.Product;
-import com.example.restfulapi.entity.ShoppingCart;
-import com.example.restfulapi.repository.ProductRepository;
 import com.example.restfulapi.service.cart.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 
 @RestController
 
 public class ShoppingCartController {
 
-    public static HashMap<Integer, ShoppingCart> listShoppingCart; // bựa
+//    public static HashMap<Integer, ShoppingCart> listShoppingCart; // bựa
     // xịn thì móc trong db ra.
 
     @Autowired
     CartService service;
 
-    @Autowired
-    ProductRepository productRepository;
 
 //    @RequestMapping(method = RequestMethod.GET,path = "list")
 //    public List<Cart> findAll(){
@@ -39,7 +29,7 @@ public class ShoppingCartController {
 
 
 
-    @RequestMapping(method = RequestMethod.GET)
+/*    @RequestMapping(method = RequestMethod.GET)
     public ShoppingCart getCart(@RequestHeader String accessToken){
         int accountId = 1; // lấy từ accessToken.
         ShoppingCart currentShoppintCart = null; // cho người dùng hiện tại.
@@ -49,5 +39,5 @@ public class ShoppingCartController {
             currentShoppintCart = new ShoppingCart();
         }
         return currentShoppintCart;
-    }
+    }*/
 }

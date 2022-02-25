@@ -18,9 +18,6 @@ public class OrderServiceImpl implements OrderService{
     OrderRepository orderRepository;
 
     @Autowired
-    ProductRepository productRepository;
-
-    @Autowired
     CustomerRepository customerRepository;
 
     @Autowired
@@ -78,9 +75,10 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
-    public ResponseApi findOrderByUsername(String username) {
-        return null;
+    public ResponseApi findOrderByCustomerId(int customerId) {
+        return new ResponseApi(HttpStatus.OK,"sucess",orderRepository.findOrdersByCustomerId(customerId));
     }
+
 
     @Override
     public ResponseApi createOrderDetail(OrderDetail orderDetail) {

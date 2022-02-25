@@ -1,10 +1,8 @@
 package com.example.restfulapi.controller;
 
-import com.example.restfulapi.entity.Cart;
 import com.example.restfulapi.entity.CartItem;
 import com.example.restfulapi.entity.Order;
-import com.example.restfulapi.entity.ShoppingCart;
-import com.example.restfulapi.repository.ProductRepository;
+
 import com.example.restfulapi.service.cart.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,21 +10,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/cart")
 @CrossOrigin("*")
 public class CartController {
 
-    public static HashMap<Integer, ShoppingCart> listShoppingCart; // bựa
+
     // xịn thì móc trong db ra.
 
     @Autowired
     CartService service;
 
-    @Autowired
-    ProductRepository productRepository;
+
 
 /*    @RequestMapping(method = RequestMethod.GET,path = "list")
     public List<Cart> findAll(){

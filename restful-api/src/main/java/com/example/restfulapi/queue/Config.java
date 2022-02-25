@@ -17,23 +17,28 @@ import static org.springframework.amqp.core.BindingBuilder.bind;
 public class Config {
     public static final String QUEUE_ORDER = "direct.queue.order";
     public static final String QUEUE_PAYMENT = "direct.queue.payment";
+    public static final String QUEUE_INVENT = "direct.queue.invent";
 
     public static final String DIRECT_EXCHANGE = "direct.exchange";
     public static final String DIRECT_ROUTING_KEY_ORDER = "direct.routingKeyOrder";
     public static final String DIRECT_ROUTING_KEY_PAY = "direct.routingKeyPay";
+    public static final String DIRECT_ROUTING_KEY_INVENT = "direct.routingKeyInvent";
 
     @Bean
     public Declarables directBinding(){
         Queue queueOrder = new Queue(QUEUE_ORDER);
         Queue queuePayment = new Queue(QUEUE_PAYMENT);
+        Queue queueInvent = new Queue(QUEUE_INVENT);
         DirectExchange directExchange = new DirectExchange(DIRECT_EXCHANGE);
 
         return new Declarables(
                 queueOrder,
                 queuePayment,
+                queueInvent,
                 directExchange,
                 bind(queueOrder).to(directExchange).with(DIRECT_ROUTING_KEY_ORDER),
-                bind(queuePayment).to(directExchange).with(DIRECT_ROUTING_KEY_PAY)
+                bind(queuePayment).to(directExchange).with(DIRECT_ROUTING_KEY_PAY),
+                bind(queueInvent).to(directExchange).with(DIRECT_ROUTING_KEY_INVENT)
         );
     }
 

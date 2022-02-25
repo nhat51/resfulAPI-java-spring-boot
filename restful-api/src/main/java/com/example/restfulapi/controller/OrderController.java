@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/v1/orders")
+@CrossOrigin("*")
 public class OrderController {
 
     @Autowired
@@ -17,6 +18,11 @@ public class OrderController {
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<ResponseApi> getOrders(){
         return  ResponseEntity.ok(service.listOrder());
+    }
+
+    @RequestMapping(method = RequestMethod.GET,path = "user")
+    public ResponseEntity<?> getOrderByUserId(@RequestParam(name = "userId")int userId){
+        return ResponseEntity.ok().body(service.findOrderByCustomerId(userId));
     }
 /*    @PostMapping(path = "save")
     public ResponseEntity<?> save(@RequestBody Order order){

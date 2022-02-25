@@ -36,6 +36,7 @@ public class Order {
     @Column(name = "updated_at")
     private LocalDate updated_at;
     private String payment_status;
+    private String inventory_status;
     @ManyToOne
     @JoinColumn(name = "customer_id",insertable = false,updatable = false)
     @JsonIgnore

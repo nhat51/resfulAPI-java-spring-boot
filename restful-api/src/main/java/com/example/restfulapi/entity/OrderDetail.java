@@ -25,10 +25,7 @@ public class OrderDetail {
     private double unitPrice;
     @Column(name = "quantity")
     private int quantity;
-    @ManyToOne
-    @MapsId("productId")
-    @JoinColumn(name = "product_id")
-    private Product product;
+    private String product_name;
 
     @ManyToOne
     @MapsId("orderId")
