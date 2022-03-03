@@ -3,7 +3,10 @@ package com.example.restfulapi.service.order;
 import com.example.restfulapi.entity.*;
 import com.example.restfulapi.repository.*;
 import com.example.restfulapi.response.ResponseApi;
+import com.example.restfulapi.specification.ObjectFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +30,10 @@ public class OrderServiceImpl implements OrderService{
     CartRepository cartRepository;
 
     @Override
-    public ResponseApi listOrder() {
-        return new ResponseApi(HttpStatus.OK,"success",orderRepository.findAll());
+    public ResponseApi listOrder(ObjectFilter objectFilter) {
+        PageRequest paging = PageRequest.of(objectFilter.getPage()-1, objectFilter.getPageSize());
+        Page<Order> data = orderRepository.findAll(paging);
+        return new ResponseApi(HttpStatus.OK,"success",data);
     }
 
     @Override
